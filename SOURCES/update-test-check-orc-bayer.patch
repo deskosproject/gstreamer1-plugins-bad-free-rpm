@@ -1,0 +1,1258 @@
+--- gst-plugins-bad-1.4.5/tests/check/orc/bayer.c	2014-12-18 12:13:33.000000000 +0100
++++ gst-plugins-bad-1.4.5.new/tests/check/orc/bayer.c	2015-06-22 17:13:40.140542998 +0200
+@@ -297,16 +297,21 @@
+   orc_union16 var43;
+ #endif
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var45;
++#else
++  orc_union16 var45;
++#endif
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -320,6 +325,9 @@
+     var42.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
+     /* 11: loadpw */
+     var43.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
++    /* 16: loadpb */
++    var45.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var45.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -327,71 +335,71 @@
+     /* 1: loadw */
+     var38 = ptr9[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr4[i];
+     /* 4: loadw */
+     var40 = ptr8[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr7[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
++    var53.i = var52.i | var51.i;
+     /* 14: loadw */
+     var44 = ptr6[i];
+     /* 15: mergebw */
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[0];
+-       _dest.x2[1] = var52.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[1] = var53.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[1];
+-       _dest.x2[1] = var52.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[1] = var53.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+-    /* 16: mergebw */
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[0];
+-       _dest.x2[1] = var42.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[0] = var47.x2[0];
++       _dest.x2[1] = var45.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[1];
+-       _dest.x2[1] = var42.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[0] = var47.x2[1];
++       _dest.x2[1] = var45.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -425,16 +433,21 @@
+   orc_union16 var43;
+ #endif
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var45;
++#else
++  orc_union16 var45;
++#endif
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -448,6 +461,9 @@
+     var42.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
+     /* 11: loadpw */
+     var43.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    /* 16: loadpb */
++    var45.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var45.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -455,71 +471,71 @@
+     /* 1: loadw */
+     var38 = ptr8[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr5[i];
+     /* 4: loadw */
+     var40 = ptr9[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr6[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
++    var53.i = var52.i | var51.i;
+     /* 14: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[0];
+-       _dest.x2[1] = var52.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[0] = var47.x2[0];
++       _dest.x2[1] = var53.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[1];
+-       _dest.x2[1] = var52.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[0] = var47.x2[1];
++       _dest.x2[1] = var53.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+     /* 15: loadw */
+     var44 = ptr7[i];
+-    /* 16: mergebw */
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[0];
+-       _dest.x2[1] = var43.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[1] = var45.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[1];
+-       _dest.x2[1] = var43.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[1] = var45.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -552,17 +568,22 @@
+ #else
+   orc_union16 var43;
+ #endif
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var44;
++#else
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#endif
++  orc_union16 var45;
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -576,6 +597,9 @@
+     var42.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
+     /* 11: loadpw */
+     var43.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
++    /* 14: loadpb */
++    var44.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var44.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -583,71 +607,71 @@
+     /* 1: loadw */
+     var38 = ptr9[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr4[i];
+     /* 4: loadw */
+     var40 = ptr8[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr7[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
+-    /* 14: loadw */
+-    var44 = ptr6[i];
+-    /* 15: mergebw */
++    var53.i = var52.i | var51.i;
++    /* 15: loadw */
++    var45 = ptr6[i];
++    /* 16: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var42.x2[0];
+-       _dest.x2[1] = var44.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[0] = var44.x2[0];
++       _dest.x2[1] = var45.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var42.x2[1];
+-       _dest.x2[1] = var44.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[0] = var44.x2[1];
++       _dest.x2[1] = var45.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+-    /* 16: mergebw */
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[0];
+-       _dest.x2[1] = var46.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[0] = var53.x2[0];
++       _dest.x2[1] = var47.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[1];
+-       _dest.x2[1] = var46.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[0] = var53.x2[1];
++       _dest.x2[1] = var47.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -680,17 +704,22 @@
+ #else
+   orc_union16 var43;
+ #endif
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var44;
++#else
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#endif
++  orc_union16 var45;
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -704,6 +733,9 @@
+     var42.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
+     /* 11: loadpw */
+     var43.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    /* 14: loadpb */
++    var44.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var44.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -711,71 +743,71 @@
+     /* 1: loadw */
+     var38 = ptr8[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr5[i];
+     /* 4: loadw */
+     var40 = ptr9[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr6[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
+-    /* 14: mergebw */
++    var53.i = var52.i | var51.i;
++    /* 15: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var43.x2[0];
+-       _dest.x2[1] = var46.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[0] = var44.x2[0];
++       _dest.x2[1] = var47.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var43.x2[1];
+-       _dest.x2[1] = var46.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[0] = var44.x2[1];
++       _dest.x2[1] = var47.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+-    /* 15: loadw */
+-    var44 = ptr7[i];
+-    /* 16: mergebw */
++    /* 16: loadw */
++    var45 = ptr7[i];
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[0];
+-       _dest.x2[1] = var44.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[0] = var53.x2[0];
++       _dest.x2[1] = var45.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[1];
+-       _dest.x2[1] = var44.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[0] = var53.x2[1];
++       _dest.x2[1] = var45.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -809,16 +841,21 @@
+   orc_union16 var43;
+ #endif
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var45;
++#else
++  orc_union16 var45;
++#endif
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -832,6 +869,9 @@
+     var42.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
+     /* 11: loadpw */
+     var43.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
++    /* 16: loadpb */
++    var45.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var45.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -839,71 +879,71 @@
+     /* 1: loadw */
+     var38 = ptr9[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr4[i];
+     /* 4: loadw */
+     var40 = ptr8[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr7[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
++    var53.i = var52.i | var51.i;
+     /* 14: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[0];
+-       _dest.x2[1] = var52.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[0] = var47.x2[0];
++       _dest.x2[1] = var53.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[1];
+-       _dest.x2[1] = var52.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[0] = var47.x2[1];
++       _dest.x2[1] = var53.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+     /* 15: loadw */
+     var44 = ptr6[i];
+-    /* 16: mergebw */
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[0];
+-       _dest.x2[1] = var42.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[1] = var45.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[1];
+-       _dest.x2[1] = var42.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[1] = var45.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -937,16 +977,21 @@
+   orc_union16 var43;
+ #endif
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var45;
++#else
++  orc_union16 var45;
++#endif
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -960,6 +1005,9 @@
+     var42.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
+     /* 11: loadpw */
+     var43.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    /* 16: loadpb */
++    var45.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var45.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -967,71 +1015,71 @@
+     /* 1: loadw */
+     var38 = ptr8[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr5[i];
+     /* 4: loadw */
+     var40 = ptr9[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr6[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
++    var53.i = var52.i | var51.i;
+     /* 14: loadw */
+     var44 = ptr7[i];
+     /* 15: mergebw */
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[0];
+-       _dest.x2[1] = var52.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[1] = var53.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+        _dest.x2[0] = var44.x2[1];
+-       _dest.x2[1] = var52.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[1] = var53.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+-    /* 16: mergebw */
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[0];
+-       _dest.x2[1] = var43.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[0] = var47.x2[0];
++       _dest.x2[1] = var45.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var46.x2[1];
+-       _dest.x2[1] = var43.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[0] = var47.x2[1];
++       _dest.x2[1] = var45.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -1064,17 +1112,22 @@
+ #else
+   orc_union16 var43;
+ #endif
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var44;
++#else
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#endif
++  orc_union16 var45;
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -1088,6 +1141,9 @@
+     var42.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
+     /* 11: loadpw */
+     var43.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
++    /* 14: loadpb */
++    var44.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var44.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -1095,71 +1151,71 @@
+     /* 1: loadw */
+     var38 = ptr9[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr4[i];
+     /* 4: loadw */
+     var40 = ptr8[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr7[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
+-    /* 14: mergebw */
++    var53.i = var52.i | var51.i;
++    /* 15: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var42.x2[0];
+-       _dest.x2[1] = var46.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[0] = var44.x2[0];
++       _dest.x2[1] = var47.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var42.x2[1];
+-       _dest.x2[1] = var46.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[0] = var44.x2[1];
++       _dest.x2[1] = var47.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+-    /* 15: loadw */
+-    var44 = ptr6[i];
+-    /* 16: mergebw */
++    /* 16: loadw */
++    var45 = ptr6[i];
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[0];
+-       _dest.x2[1] = var44.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[0] = var53.x2[0];
++       _dest.x2[1] = var45.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[1];
+-       _dest.x2[1] = var44.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[0] = var53.x2[1];
++       _dest.x2[1] = var45.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -1192,17 +1248,22 @@
+ #else
+   orc_union16 var43;
+ #endif
++#if defined(__APPLE__) && __GNUC__ == 4 && __GNUC_MINOR__ == 2 && defined (__i386__) 
++  volatile orc_union16 var44;
++#else
+   orc_union16 var44;
+-  orc_union64 var45;
+-  orc_union16 var46;
++#endif
++  orc_union16 var45;
++  orc_union64 var46;
+   orc_union16 var47;
+   orc_union16 var48;
+   orc_union16 var49;
+   orc_union16 var50;
+   orc_union16 var51;
+   orc_union16 var52;
+-  orc_union32 var53;
++  orc_union16 var53;
+   orc_union32 var54;
++  orc_union32 var55;
+ 
+   ptr0 = (orc_union64 *)ex->arrays[0];
+   ptr4 = (orc_union16 *)ex->arrays[4];
+@@ -1216,6 +1277,9 @@
+     var42.i = (int)0x0000ff00; /* 65280 or 3.22526e-319f */
+     /* 11: loadpw */
+     var43.i = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    /* 14: loadpb */
++    var44.x2[0] = (int)0x000000ff; /* 255 or 1.25987e-321f */
++    var44.x2[1] = (int)0x000000ff; /* 255 or 1.25987e-321f */
+ 
+   for (i = 0; i < n; i++) {
+     /* 0: loadw */
+@@ -1223,71 +1287,71 @@
+     /* 1: loadw */
+     var38 = ptr8[i];
+     /* 2: avgub */
+-    var46.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
+-    var46.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
++    var47.x2[0] = ((orc_uint8)var37.x2[0] + (orc_uint8)var38.x2[0] + 1)>>1;
++    var47.x2[1] = ((orc_uint8)var37.x2[1] + (orc_uint8)var38.x2[1] + 1)>>1;
+     /* 3: loadw */
+     var39 = ptr5[i];
+     /* 4: loadw */
+     var40 = ptr9[i];
+     /* 5: avgub */
+-    var47.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
+-    var47.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
++    var48.x2[0] = ((orc_uint8)var39.x2[0] + (orc_uint8)var40.x2[0] + 1)>>1;
++    var48.x2[1] = ((orc_uint8)var39.x2[1] + (orc_uint8)var40.x2[1] + 1)>>1;
+     /* 6: loadw */
+     var41 = ptr6[i];
+     /* 7: copyw */
+-    var48.i = var41.i;
++    var49.i = var41.i;
+     /* 8: avgub */
+-    var49.x2[0] = ((orc_uint8)var47.x2[0] + (orc_uint8)var48.x2[0] + 1)>>1;
+-    var49.x2[1] = ((orc_uint8)var47.x2[1] + (orc_uint8)var48.x2[1] + 1)>>1;
++    var50.x2[0] = ((orc_uint8)var48.x2[0] + (orc_uint8)var49.x2[0] + 1)>>1;
++    var50.x2[1] = ((orc_uint8)var48.x2[1] + (orc_uint8)var49.x2[1] + 1)>>1;
+     /* 10: andw */
+-    var50.i = var49.i & var42.i;
++    var51.i = var50.i & var42.i;
+     /* 12: andw */
+-    var51.i = var48.i & var43.i;
++    var52.i = var49.i & var43.i;
+     /* 13: orw */
+-    var52.i = var51.i | var50.i;
+-    /* 14: loadw */
+-    var44 = ptr7[i];
+-    /* 15: mergebw */
++    var53.i = var52.i | var51.i;
++    /* 15: loadw */
++    var45 = ptr7[i];
++    /* 16: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var43.x2[0];
+-       _dest.x2[1] = var44.x2[0];
+-       var53.x2[0] = _dest.i;
++       _dest.x2[0] = var44.x2[0];
++       _dest.x2[1] = var45.x2[0];
++       var54.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var43.x2[1];
+-       _dest.x2[1] = var44.x2[1];
+-       var53.x2[1] = _dest.i;
++       _dest.x2[0] = var44.x2[1];
++       _dest.x2[1] = var45.x2[1];
++       var54.x2[1] = _dest.i;
+     }
+-    /* 16: mergebw */
++    /* 17: mergebw */
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[0];
+-       _dest.x2[1] = var46.x2[0];
+-       var54.x2[0] = _dest.i;
++       _dest.x2[0] = var53.x2[0];
++       _dest.x2[1] = var47.x2[0];
++       var55.x2[0] = _dest.i;
+     }
+     {
+        orc_union16 _dest;
+-       _dest.x2[0] = var52.x2[1];
+-       _dest.x2[1] = var46.x2[1];
+-       var54.x2[1] = _dest.i;
++       _dest.x2[0] = var53.x2[1];
++       _dest.x2[1] = var47.x2[1];
++       var55.x2[1] = _dest.i;
+     }
+-    /* 17: mergewl */
++    /* 18: mergewl */
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[0];
+-       _dest.x2[1] = var54.x2[0];
+-       var45.x2[0] = _dest.i;
++       _dest.x2[0] = var54.x2[0];
++       _dest.x2[1] = var55.x2[0];
++       var46.x2[0] = _dest.i;
+     }
+     {
+        orc_union32 _dest;
+-       _dest.x2[0] = var53.x2[1];
+-       _dest.x2[1] = var54.x2[1];
+-       var45.x2[1] = _dest.i;
++       _dest.x2[0] = var54.x2[1];
++       _dest.x2[1] = var55.x2[1];
++       var46.x2[1] = _dest.i;
+     }
+-    /* 18: storeq */
+-    ptr0[i] = var45;
++    /* 19: storeq */
++    ptr0[i] = var46;
+   }
+ 
+ }
+@@ -1475,6 +1539,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x000000ff, "c1");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1489,7 +1554,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_S3, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_T3, ORC_VAR_C1, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_T3, ORC_VAR_C3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1);
+ 
+     if (benchmark) {
+@@ -1544,6 +1609,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c1");
+       orc_program_add_constant (p, 2, 0x000000ff, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1558,7 +1624,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_T3, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_S4, ORC_VAR_C2, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_S4, ORC_VAR_C3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_T1, ORC_VAR_D1);
+ 
+     if (benchmark) {
+@@ -1613,6 +1679,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x000000ff, "c1");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1626,7 +1693,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T4, ORC_VAR_T4, ORC_VAR_C1, ORC_VAR_D1);
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_S3, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C3, ORC_VAR_S3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_T4, ORC_VAR_T3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1);
+ 
+@@ -1682,6 +1749,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c1");
+       orc_program_add_constant (p, 2, 0x000000ff, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1695,7 +1763,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T4, ORC_VAR_T4, ORC_VAR_C1, ORC_VAR_D1);
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C2, ORC_VAR_T3, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C3, ORC_VAR_T3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_T4, ORC_VAR_S4, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1);
+ 
+@@ -1751,6 +1819,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x000000ff, "c1");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1765,7 +1834,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_T3, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_S3, ORC_VAR_C1, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_S3, ORC_VAR_C3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1);
+ 
+     if (benchmark) {
+@@ -1820,6 +1889,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c1");
+       orc_program_add_constant (p, 2, 0x000000ff, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1834,7 +1904,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_S4, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_T3, ORC_VAR_C2, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_T3, ORC_VAR_C3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1);
+ 
+     if (benchmark) {
+@@ -1889,6 +1959,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x000000ff, "c1");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1902,7 +1973,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T4, ORC_VAR_T4, ORC_VAR_C1, ORC_VAR_D1);
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_T3, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C3, ORC_VAR_T3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_T4, ORC_VAR_S3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1);
+ 
+@@ -1958,6 +2029,7 @@
+     orc_program_add_source (p, 2, "s6");
+       orc_program_add_constant (p, 2, 0x0000ff00, "c1");
+       orc_program_add_constant (p, 2, 0x000000ff, "c2");
++      orc_program_add_constant (p, 1, 0x000000ff, "c3");
+     orc_program_add_temporary (p, 4, "t1");
+     orc_program_add_temporary (p, 4, "t2");
+     orc_program_add_temporary (p, 2, "t3");
+@@ -1971,7 +2043,7 @@
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T4, ORC_VAR_T4, ORC_VAR_C1, ORC_VAR_D1);
+       orc_program_append_2 (p, "andw", 0, ORC_VAR_T5, ORC_VAR_T5, ORC_VAR_C2, ORC_VAR_D1);
+       orc_program_append_2 (p, "orw", 0, ORC_VAR_T4, ORC_VAR_T5, ORC_VAR_T4, ORC_VAR_D1);
+-      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C2, ORC_VAR_S4, ORC_VAR_D1);
++      orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T1, ORC_VAR_C3, ORC_VAR_S4, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergebw", 1, ORC_VAR_T2, ORC_VAR_T4, ORC_VAR_T3, ORC_VAR_D1);
+       orc_program_append_2 (p, "mergewl", 1, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2, ORC_VAR_D1);
+ 
