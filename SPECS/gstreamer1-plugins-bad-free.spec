@@ -10,7 +10,7 @@
 
 Name:           gstreamer1-plugins-bad-free
 Version:        1.4.5
-Release:        4%{?dist}
+Release:        4.1%{?dist}
 Summary:        GStreamer streaming media framework "bad" plugins
 
 License:        LGPLv2+ and LGPLv2
@@ -181,6 +181,8 @@ find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 chrpath --delete $RPM_BUILD_ROOT%{_libdir}/gstreamer-%{majorminor}/libgstvideoparsersbad.so
 chrpath --delete $RPM_BUILD_ROOT%{_libdir}/gstreamer-%{majorminor}/libgstcamerabin2.so
 
+# Fix CVE-2016-9445, CVE-2016-9446
+rm -f $RPM_BUILD_ROOT%{_libdir}/gstreamer-%{majorminor}/libgstvmnc.so
 
 %post -p /sbin/ldconfig
 
@@ -268,7 +270,7 @@ chrpath --delete $RPM_BUILD_ROOT%{_libdir}/gstreamer-%{majorminor}/libgstcamerab
 %{_libdir}/gstreamer-%{majorminor}/libgstvideofiltersbad.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvideoparsersbad.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvideosignal.so
-%{_libdir}/gstreamer-%{majorminor}/libgstvmnc.so
+#%{_libdir}/gstreamer-%{majorminor}/libgstvmnc.so
 %{_libdir}/gstreamer-%{majorminor}/libgstyadif.so
 %{_libdir}/gstreamer-%{majorminor}/libgsty4mdec.so
 
@@ -349,6 +351,10 @@ chrpath --delete $RPM_BUILD_ROOT%{_libdir}/gstreamer-%{majorminor}/libgstcamerab
 %{_libdir}/pkgconfig/gstreamer-plugins-bad-%{majorminor}.pc
 
 %changelog
+* Tue Nov 29 2016 Ricardo Arguello <rarguello@deskosproject.org> - 1.4.5-4.1
+- Fix CVE-2016-9445, CVE-2016-9446 by removing libgstvmnc.so
+- Rebuilt for DeskOS
+
 * Thu May 26 2016 Wim Taymans <wtaymans@redhat.com> - 1.4.5-4
 - rebuild for libdvdnav update
 - Resolves: #1340047
